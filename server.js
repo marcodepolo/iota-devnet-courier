@@ -12,6 +12,10 @@ app.get('/', (req, res) => {
   res.send('Hello world\n');
 });
 
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = PORT;
+}
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
 
