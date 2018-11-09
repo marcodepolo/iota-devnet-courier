@@ -7,8 +7,9 @@ services:
     working_dir: /home/node/app
     environment:
       - NODE_ENV=production
+      - PORT=8084
     volumes:
       - ./:/home/node/app
     ports:
-      - "8084:8080"
+      - "8084:8084"
     command: "npm start"
