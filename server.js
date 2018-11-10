@@ -107,7 +107,7 @@ function sendHelloWord(){
 
 function sendTransaction(receiver, msgTrytes, tagTrytes, value){
 	const seed =
-	  'HELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDD'
+	  'HELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORL99'
 
     console.log('receiver: ' + receiver)
     console.log('msg: ' + msgTrytes)
