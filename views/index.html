@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Iota Devnet courier</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+$(document).ready(function() { 
+	$('#send').click(function(){
+		$('#log-info').empty();
+		var val = $('#send-value').is(':checked') ? 1 : 0;
+		var params = {};
+		$.extend(params, { "msgTrytes": $('#msg-trytes').val() })
+		$.extend(params, { "tagTrytes": $('#tag-trytes').val() })
+		$.extend(params, { "value": val })
+		$.extend(params, { "receiver": $('#address').val() })
+
+		$.post('/sendTransaction', params, function(data) {
+			$('#log-info').empty().append(data);
+		});
+	});
+	$('#msg-bytes').keyup(function(){
+		var params = {};
+		$.extend(params, { "bytesMsg": $('#msg-bytes').val() })
+		$.post('/toTrytes', params, function(data) {
+			$('#msg-trytes').val(data);
+		});
+	});
+
+	$('#tag-bytes').keyup(function(){
+		var params = {};
+		$.extend(params, { "bytesMsg": $('#tag-bytes').val() })
+		$.post('/toTrytes', params, function(data) {
+			$('#tag-trytes').val(data);
+		});
+	});
+	
+});
+</script>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+  </div>
+</nav>
+  
+<div class="jumbotron text-center">
+  <h1>Iota Devnet courier</h1>
+  <p>send transactions to Devnet addresses, with a message, a tag and an optional amount of IOTA Devnet tokens</p> 
+</div>
+  
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+	  	<button class="btn btn-default pull-right" id="send">Send</button>
+	 </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+	  	<div id="log-info" class="well"></div>
+	 </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <h3>Your message (Bytes)</h3>
+      <textarea id="msg-bytes" class="form-control"></textarea>
+    </div>
+    <div class="col-sm-6">
+      <h3>Your message (Trytes)</h3>
+      <textarea id="msg-trytes" class="form-control"></textarea>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <h3>Your tag (Bytes)</h3>
+      <textarea id="tag-bytes" class="form-control"></textarea>
+    </div>
+    <div class="col-sm-6">
+      <h3>Your tag (Trytes)</h3>
+      <textarea id="tag-trytes" class="form-control"></textarea>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+	    <h3>Value</h3>
+		<div>
+			<input class="form-check-input" type="checkbox" id="send-value" />
+			<label class="form-check-label" for="send-value">Send 1 devnet Iota</label>
+		</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+	    <h3>Receiver address</h3>
+	  	<div><input id="address" class="form-control" type="text"/></div>
+	  </div>
+  </div>
+</div>
+ 
+</body>
+</html>
