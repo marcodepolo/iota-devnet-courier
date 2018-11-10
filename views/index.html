@@ -12,7 +12,7 @@
 <script type="text/javascript">
 $(document).ready(function() { 
 	$('#send').click(function(){
-		$('#log-info').empty();
+		$('#log-info').empty().append('sending transaction...');
 		var val = $('#send-value').is(':checked') ? 1 : 0;
 		var params = {};
 		$.extend(params, { "msgTrytes": $('#msg-trytes').val() })
@@ -21,7 +21,7 @@ $(document).ready(function() {
 		$.extend(params, { "receiver": $('#address').val() })
 
 		$.post('/sendTransaction', params, function(data) {
-			$('#log-info').empty().append(data);
+			$('#log-info').empty().append($('<pre>').text(data));
 		});
 	});
 	$('#msg-bytes').keyup(function(){

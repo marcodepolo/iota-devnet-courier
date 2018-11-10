@@ -45,12 +45,7 @@ app.post('/sendTransaction',function(req,res){
   var msgTrytes = req.body.msgTrytes;
   var tagTrytes = req.body.tagTrytes;
   var value = parseInt(req.body.value);
-  try{
-	  sendTransaction(receiver, msgTrytes, tagTrytes, value)
-	  res.send("transaction sent");
-  }catch(error){
-	  res.send("transaction not sent\n" + error);
-  }
+  sendTransaction(res, receiver, msgTrytes, tagTrytes, value)
 
 });
 
@@ -105,10 +100,15 @@ function sendHelloWord(){
 	})
 }
 
-function sendTransaction(receiver, msgTrytes, tagTrytes, value){
+function sendTransaction(res, receiver, msgTrytes, tagTrytes, value){
+	// this seed has a few dev iota
+/*	const seed =
+	  'HELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDD'
+*/
+	// this seed has no balance
 	const seed =
-	  'HELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORL99'
-
+		  'HELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDD'
+		
     console.log('receiver: ' + receiver)
     console.log('msg: ' + msgTrytes)
     console.log('tag: ' + tagTrytes)
@@ -123,15 +123,16 @@ function sendTransaction(receiver, msgTrytes, tagTrytes, value){
 	  }
 	]
 
+	
 	iota.api.sendTransfer(seed, 3, 9, transfers, (error, success) => {
 	  // this get called only on exception
 		// if transaction fails (no funds on seed?) doesnt get called
-		console.log('calledback')
 	  if (error) {
 		  console.log(error)
-		  throw error
+		  res.send("transaction not sent\n" + error)
 	  } else {
 		  console.log(success)
+		  res.send(JSON.stringify(success, null, '\t'))
 	  }
 	})
 }
