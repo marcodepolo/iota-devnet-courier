@@ -37,7 +37,7 @@ router.get("/about",function(req,res){
 
 app.post('/toTrytes',function(req,res){
   var bytesMsg = req.body.bytesMsg;
-  res.send(iota.utils.toTrytes(bytesMsg));
+  res.send(converter.asciiToTrytes(bytesMsg));
 });
 
 app.post('/sendTransaction',function(req,res){
@@ -54,13 +54,18 @@ app.use("*",function(req,res){
   res.sendFile(path + "404.html");
 });
 
+//Require the use of IOTA library
+const composeAPI = require("@iota/core");
+// converter module required to convert ascii msg to trytes
+const converter = require('@iota/converter')
 
-// Require the use of IOTA library
-const IOTA = require('iota.lib.js')
+const iota = composeAPI.composeAPI({
+    provider: 'https://nodes.devnet.iota.org:443'
+})
 
-// Create a new instance of the IOTA class object.
-// Use 'provider' variable to specify which Full Node to talk to
-const iota = new IOTA({ provider: 'https://nodes.devnet.iota.org:443' })
+//IOTA node 
+const provider = 'https://nodes.devnet.iota.org:443'
+
 
 function getNodeInfo(){
 	// Call the 'getNodeInfo call to check that the node is working
@@ -105,9 +110,9 @@ function sendTransaction(res, receiver, msgTrytes, tagTrytes, value){
 /*	const seed =
 	  'HELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDD'
 */
-	// this seed has no balance
+	// this seed has about 2k dev iota
 	const seed =
-		  'HELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDD'
+		  'BFUXLVTHVAZDSODQDBGAXMBKPEKOVTMGTTPQFUTOU9DPJOZQMOXJUNZSFIGPSKBJLXGUHYJZSXTCUDCGX'
 		
     console.log('receiver: ' + receiver)
     console.log('msg: ' + msgTrytes)
@@ -123,16 +128,24 @@ function sendTransaction(res, receiver, msgTrytes, tagTrytes, value){
 	  }
 	]
 
+	// Prepare a bundle and signs it
+	iota.prepareTransfers(seed, transfers)
+	      .then(trytes => {
+	          // Persist trytes locally before sending to network.
+	          // This allows for reattachments and prevents key reuse if trytes can't
+	          // be recovered by querying the network after broadcasting.
 	
-	iota.api.sendTransfer(seed, 3, 9, transfers, (error, success) => {
-	  // this get called only on exception
-		// if transaction fails (no funds on seed?) doesnt get called
-	  if (error) {
-		  console.log(error)
-		  res.send("transaction not sent\n" + error)
-	  } else {
-		  console.log(success)
-		  res.send(JSON.stringify(success, null, '\t'))
-	  }
-	})
+	          // Does tip selection, attaches to tangle by doing PoW and broadcasts.
+	          return iota.sendTrytes(trytes, 3, 9)
+	      })
+	      .then(bundle => {
+	          console.log(`Published transaction with tail hash: ${bundle[0].hash}`)
+	          console.log(`Bundle: ${bundle}`)
+	          res.send(JSON.stringify(bundle, null, '\t'))
+	      })
+	      .catch(err => {
+	          // catch any errors
+	          console.log("Error:", err);
+	          res.send("transaction not sent\n" + err)
+	      })	
 }
