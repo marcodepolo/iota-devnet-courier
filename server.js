@@ -127,25 +127,31 @@ function sendTransaction(res, receiver, msgTrytes, tagTrytes, value){
 	    tag: tagTrytes
 	  }
 	]
-
-	// Prepare a bundle and signs it
-	iota.prepareTransfers(seed, transfers)
-	      .then(trytes => {
-	          // Persist trytes locally before sending to network.
-	          // This allows for reattachments and prevents key reuse if trytes can't
-	          // be recovered by querying the network after broadcasting.
 	
-	          // Does tip selection, attaches to tangle by doing PoW and broadcasts.
-	          return iota.sendTrytes(trytes, 3, 9)
-	      })
-	      .then(bundle => {
-	          console.log(`Published transaction with tail hash: ${bundle[0].hash}`)
-	          console.log(`Bundle: ${bundle}`)
-	          res.send(JSON.stringify(bundle, null, '\t'))
-	      })
-	      .catch(err => {
-	          // catch any errors
-	          console.log("Error:", err);
-	          res.send("transaction not sent\n" + err)
-	      })	
+	try{
+		// Prepare a bundle and signs it
+		iota.prepareTransfers(seed, transfers)
+		      .then(trytes => {
+		          // Persist trytes locally before sending to network.
+		          // This allows for reattachments and prevents key reuse if trytes can't
+		          // be recovered by querying the network after broadcasting.
+		
+		          // Does tip selection, attaches to tangle by doing PoW and broadcasts.
+		          return iota.sendTrytes(trytes, 3, 9)
+		      })
+		      .then(bundle => {
+		          console.log(`Published transaction with tail hash: ${bundle[0].hash}`)
+		          console.log(`Bundle: ${bundle}`)
+		          res.send(JSON.stringify(bundle, null, '\t'))
+		      })
+		      .catch(err => {
+		          // catch any errors
+		          console.log("Error:", err);
+		          res.send("transaction not sent\n" + err)
+		      })	
+	}catch(err){
+		// catch Invalid transfer object errors
+        console.log("Error prepareTransfer:", err);
+        res.send("transaction not sent\n" + err)
+	}
 }
