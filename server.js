@@ -67,6 +67,20 @@ const iota = composeAPI.composeAPI({
 const provider = 'https://nodes.devnet.iota.org:443'
 
 
+
+	
+// subscribe to events so we can receive notifications when tx is live.
+// broken on install (had to install node-legacy on ubuntu for npm install to work
+// still broken after install
+// Error: /usr/lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.21' not found (required by /home/node/app/node_modules/zeromq/build/Release/zmq.node)
+
+/*let zmq = require('zeromq')
+let sock = zmq.socket('sub')
+
+sock.connect('tcp://zmq.devnet.iota.org:5556')
+sock.subscribe('tx')
+sock.subscribe('sn')	
+*/
 function getNodeInfo(){
 	// Call the 'getNodeInfo call to check that the node is working
 	iota.api.getNodeInfo((error, success) => {
@@ -155,3 +169,18 @@ function sendTransaction(res, receiver, msgTrytes, tagTrytes, value){
         res.send("transaction not sent\n" + err)
 	}
 }
+
+// could use this to push notifications back to the web page ?
+/*sock.on('message', msg => {
+	  const data = msg.toString().split(' ') // Split to get topic & data
+	  switch (
+	    data[0] // Use index 0 to match topic
+	  ) {
+	    case 'tx':
+	      console.log(`I'm a TX!`, data)
+	      break
+	    case 'sn':
+	      console.log(`I'm a confirmed TX`, data)
+	      break
+	  }
+})*/
