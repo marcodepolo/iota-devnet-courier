@@ -1,5 +1,14 @@
 'use strict';
 
+//Require the use of IOTA library
+const composeAPI = require("@iota/core");
+// converter module required to convert ascii msg to trytes
+const converter = require('@iota/converter')
+
+const iota = composeAPI.composeAPI({
+    provider: 'https://nodes.devnet.iota.org:443'
+})
+
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
@@ -18,15 +27,18 @@ if (port == null || port == "") {
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+// start server
 app.listen(port, HOST);
 console.log(`Running on http://${HOST}:${port}`);
 app.use("/",router);
 
+// routes definitions
 router.use(function (req,res,next) {
   console.log("/" + req.method);
   next();
 });
  
+//get routes
 router.get("/",function(req,res){
   res.sendFile(path + "index.html");
 });
@@ -35,6 +47,7 @@ router.get("/about",function(req,res){
   res.sendFile(path + "about.html");
 });
 
+//post routes
 app.post('/toTrytes',function(req,res){
   var bytesMsg = req.body.bytesMsg;
   res.send(converter.asciiToTrytes(bytesMsg));
@@ -49,24 +62,10 @@ app.post('/sendTransaction',function(req,res){
 
 });
 
-
+//default route
 app.use("*",function(req,res){
   res.sendFile(path + "404.html");
 });
-
-//Require the use of IOTA library
-const composeAPI = require("@iota/core");
-// converter module required to convert ascii msg to trytes
-const converter = require('@iota/converter')
-
-const iota = composeAPI.composeAPI({
-    provider: 'https://nodes.devnet.iota.org:443'
-})
-
-//IOTA node 
-const provider = 'https://nodes.devnet.iota.org:443'
-
-
 
 	
 // subscribe to events so we can receive notifications when tx is live.
