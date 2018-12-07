@@ -4,6 +4,11 @@ send transactions to Devnet addresses, with a message, a tag and an optional IOT
 
 tokens are coming from devnet seed HELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDHELLOWORLDD
 
-FIXME: connection take too long when sending a token, browser message stuck displaying "sending transaction..." 
+implement a simple iota-transaction-stream listener to receive notifications when tx is processed
+
+TODO 
+  use powsrv.io to do the proof of work for faster transactions
+  replace hard coded ip with a iota-transaction-stream url
+  implement call to https://iota.readme.io/v1.5.5/reference#wereaddressesspentfrom to check if receiver address was already spent
 
 
